@@ -20,3 +20,6 @@ __pycache__/
 # Demo QA and temporary preparation files
 dashboard/outputs/
 dashboard/work/
+
+# Cloudflare local cache
+.wrangler/

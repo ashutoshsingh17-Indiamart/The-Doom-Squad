@@ -1,0 +1,14 @@
+// Cloudflare Workers deployment. Build first with `npm run build`, then `npx wrangler deploy`.
+// Secrets (SARVAM_API_KEY, OPENROUTER_API_KEY, SUPABASE_URL, SUPABASE_SECRET_KEY) are set in the
+// Cloudflare dashboard, never in this file.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "voiceops",
+  "main": "worker/index.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  "observability": { "enabled": true }
+}
