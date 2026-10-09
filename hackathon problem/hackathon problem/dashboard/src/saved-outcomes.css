@@ -1,0 +1,59 @@
+.saved-outcomes{display:grid;gap:20px}
+.saved-library-summary{display:flex;align-items:center;justify-content:space-between;gap:20px;border:1px solid #e2e7f3;border-radius:12px;padding:22px 24px;background:linear-gradient(110deg,#fff,#f0f2ff)}
+.saved-library-summary>div:first-child{display:flex;align-items:center;gap:16px;min-width:0}
+.saved-library-icon{width:46px;height:46px;display:grid;place-items:center;background:#e9edff;color:#5865d5;border:1px solid #dce1fc;border-radius:12px;flex-shrink:0}
+.saved-library-summary strong{font-family:'Manrope Variable',sans-serif;font-size:16px;letter-spacing:-.3px;color:#283753}
+.saved-library-summary p{margin-top:4px;font-size:12px;color:#7887a0}
+.saved-library-actions{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.saved-connection{display:flex;align-items:center;gap:7px;font-size:12px;color:#8a94a6}
+.saved-connection i{width:6px;height:6px;border-radius:50%;background:#c19553}
+.saved-connection.connected i{background:#37a080}
+.saved-library-totals{display:flex;flex-wrap:wrap;gap:12px 32px;padding:0 2px;color:#8a94a7;font-size:12px}
+.saved-library-totals strong{font-size:17px;color:#415474;margin-right:6px;font-weight:700;font-variant-numeric:tabular-nums}
+.saved-outcome-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.saved-outcome-card{position:relative;padding:22px 22px 0;overflow:hidden;--outcome-accent:#7b73d4;--outcome-wash:#f0eefe;--outcome-fill:#f1f0fc;transition:box-shadow .18s,border-color .18s,transform .18s}
+.saved-outcome-card:not(.locked):hover{box-shadow:0 8px 25px #20304d12;border-color:#bfc9e3;transform:translateY(-2px)}
+.saved-open-button::after{content:'';position:absolute;inset:0;cursor:pointer;border-radius:12px}
+.saved-open-button:disabled::after{pointer-events:none;cursor:default}
+.saved-outcome-card:has(.saved-open-button:focus-visible){outline:3px solid #a89bdc;outline-offset:3px}
+.saved-outcome-card.winner{--outcome-accent:#248d74;--outcome-wash:#e9f7f0;--outcome-fill:#eef9f4}
+.saved-outcome-card.stopped{--outcome-accent:#bf6269;--outcome-wash:#fff0f0;--outcome-fill:#fdf1f2}
+.saved-outcome-card.control{--outcome-accent:#5378b0;--outcome-wash:#edf2fc;--outcome-fill:#f0f4fb}
+.saved-outcome-card.retreat{--outcome-accent:#b28645;--outcome-wash:#fcf4e6;--outcome-fill:#fcf6ed}
+.saved-card-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px}
+.saved-outcome-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--outcome-wash);color:var(--outcome-accent)}
+.saved-outcome-badge{font-size:11px;font-weight:600;padding:5px 9px;border-radius:20px;background:var(--outcome-wash);color:var(--outcome-accent);white-space:nowrap}
+.saved-outcome-card h2{font-size:16px;letter-spacing:-.4px;line-height:1.55;color:#2c3b58}
+.saved-card-description{font-size:12px;color:#8894a9;margin-top:4px;min-height:20px}
+.saved-traffic{margin-top:22px;border:1px solid #e9edf6;border-radius:9px;background:#fafbff;padding:12px 12px 0}
+.saved-traffic>div{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.saved-traffic>div>span{font-size:11px;color:#8190aa}
+.saved-traffic strong{font-size:15px;color:var(--outcome-accent);font-variant-numeric:tabular-nums}
+.saved-traffic strong small{font-size:10px;font-weight:400;color:#94a0b5;margin-left:3px}
+.saved-traffic svg{display:block;width:100%;height:auto;overflow:visible;margin-top:3px}
+.saved-chart-axis{stroke:#e7ebf4;stroke-dasharray:3 4}
+.saved-chart-line{fill:none;stroke:var(--outcome-accent);stroke-width:2.3;stroke-linejoin:round}
+.saved-chart-fill{fill:var(--outcome-fill)}
+.saved-traffic circle{stroke:var(--outcome-accent);stroke-width:2;fill:#fff}
+.saved-chart-value{font-size:11px;fill:var(--outcome-accent);font-family:inherit;font-weight:600}
+.saved-chart-label{font-size:10px;fill:#98a3b7;font-family:inherit}
+.saved-goal-results{padding:18px 0 16px}
+.saved-goal-caption{display:block;font-size:11px;color:#8a96aa;margin-bottom:12px}
+.saved-arm-result{display:grid;grid-template-columns:21px minmax(0,1fr) 36px 37px;align-items:center;gap:10px;margin-top:10px}
+.saved-arm-result strong{font-size:12px;text-align:right;color:#536b90;font-weight:650;font-variant-numeric:tabular-nums}
+.saved-arm-result small{font-size:11px;text-align:right;color:#95a2b7;font-variant-numeric:tabular-nums}
+.saved-success-track{height:5px;border-radius:4px;overflow:hidden;background:#f0f3f9}
+.saved-success-track i{display:block;height:100%;border-radius:4px;background:#99aac8}
+.saved-arm-result:last-child .saved-success-track i{background:#8a80df}
+.saved-arm-result:last-child strong{color:#786cd0}
+.saved-card-facts{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:12px 0 16px;font-size:10px;color:#95a1b6;border-top:1px solid #eef1f7;flex-wrap:wrap}
+.saved-card-facts span:first-child{display:flex;align-items:center;gap:6px}
+.saved-card-actions{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;margin:0 -22px;background:#fcfdff;border-top:1px solid #edf0f7}
+.saved-card-actions .button{font-size:11px;min-height:32px;padding:7px 10px}
+.saved-card-actions .icon-button{position:relative;z-index:1;border:1px solid #e7ebf4;border-radius:7px;width:32px;height:32px;background:#fff}
+.saved-empty{padding:50px;text-align:center;color:#8a96aa;display:grid;justify-items:center;gap:12px}
+.saved-empty h2{font-size:16px;color:#526483}
+.saved-active-notice{font-size:12px;color:#847050;padding:10px 14px;border-radius:7px;background:#faf5e9}
+@media(max-width:1370px){.saved-outcome-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.saved-library-summary{align-items:flex-start;flex-direction:column;padding:18px}.saved-library-actions{justify-content:space-between;width:100%}.saved-outcome-grid{gap:16px}.saved-outcome-card{padding:18px 18px 0}.saved-card-actions{margin:0 -18px;padding:14px 18px}}
+@media(max-width:650px){.saved-outcome-grid{grid-template-columns:minmax(0,1fr)}.saved-library-totals{gap:10px 18px}.saved-library-summary>div:first-child{gap:12px}.saved-library-summary strong{font-size:14px}.saved-library-icon{width:38px;height:38px}.saved-empty{padding:30px 18px}}

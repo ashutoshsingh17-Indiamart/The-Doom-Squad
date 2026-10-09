@@ -1,0 +1,3 @@
+import {chromium} from '@playwright/test';
+import {mkdirSync} from 'node:fs';
+mkdirSync('outputs',{recursive:true});const browser=await chromium.launch({channel:'chrome',headless:true});const page=await browser.newPage({viewport:{width:1440,height:1100}});const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:3000');await page.getByRole('heading',{name:'Start new A/B',exact:true}).waitFor();await page.screenshot({path:'outputs/layout-review.png',fullPage:true});console.log(JSON.stringify({errors,overflow:await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)}));await browser.close();

@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import {mkdirSync,writeFileSync} from 'node:fs';
+import {baselinePrompt} from '../shared/domain.mjs';
+const base='http://127.0.0.1:3000/api/';
+async function call(path,body){const r=await fetch(base+path,body?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(55000)}:undefined);const d=await r.json();if(!r.ok)throw new Error(d.error);return d;}
+const catalog=await call('models');
+const chosen=catalog[0];
+console.log('Testing free model:',chosen.id);
+const generated=await call('prompts/generate',{baseline:baselinePrompt,improvement:'Explain unfamiliar specifications simply. Capture volunteered details immediately and keep questions concise.',model:chosen.id});
+assert.ok(generated.prompt.length>100);assert.ok(Array.isArray(generated.changes));
+mkdirSync('work',{recursive:true});writeFileSync('work/generated-prompt.json',JSON.stringify(generated,null,2));
+console.log('Prompt generation passed:',generated.prompt.length,'characters;',generated.changes.length,'changes.');
+const started=await call('live/start',{productId:'tshirts',language:'en-IN',voice:false,buyerName:'Demo Buyer',buyerCity:'Delhi'});
+const answer='Yes, I still need 200 cotton T-shirts with a plain pattern.';
+const result=await call('live/turn',{productId:'tshirts',language:'en-IN',voice:false,buyerName:'Demo Buyer',buyerCity:'Delhi',model:chosen.id,prompt:baselinePrompt,history:[{role:'assistant',content:started.reply},{role:'user',content:answer}],state:started.state});
+assert.equal(result.ended,true);assert.equal(result.outcome,'Qualified lead');assert.equal(result.fields.quantity,'200');assert.match(result.fields.Fabric,/cotton/i);assert.match(result.fields.Pattern,/plain/i);
+console.log('Live text collection passed:',JSON.stringify(result.fields));
+const refused=await call('live/turn',{productId:'tshirts',language:'en-IN',voice:false,buyerName:'Demo Buyer',buyerCity:'Delhi',model:chosen.id,prompt:baselinePrompt,history:[{role:'assistant',content:started.reply},{role:'user',content:'No, I already purchased them. Please stop calling.'}],state:started.state});
+assert.equal(refused.ended,true);assert.equal(refused.outcome,'No requirement');
+console.log('Refusal handling passed. No Sarvam voice credits spent.');

@@ -1,0 +1,16 @@
+import {chromium,expect} from '@playwright/test';
+const browser=await chromium.launch({channel:'chrome',headless:true});
+const page=await browser.newPage({viewport:{width:1440,height:1100}});
+const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.goto('http://127.0.0.1:3000');
+await page.getByRole('button',{name:'Try the agent',exact:true}).click();
+await page.getByRole('dialog',{name:'Try the live agent',exact:true}).waitFor();
+await page.getByRole('button',{name:'Start conversation',exact:true}).click();
+await page.getByLabel('Buyer reply',{exact:true}).fill('Yes, I need 200 cotton T-shirts with a plain pattern.');
+await page.getByRole('button',{name:'Send buyer reply',exact:true}).click();
+await page.getByText('Qualified lead',{exact:true}).waitFor({timeout:55000});
+await expect(page.getByText('quantity: 200',{exact:true})).toBeVisible();
+await page.screenshot({path:'outputs/live-agent.png',fullPage:true});
+await page.getByRole('button',{name:'Close live agent',exact:true}).click();
+console.log(JSON.stringify({liveTextUI:'passed',errors,voiceCreditsSpent:0}));
+await browser.close();if(errors.length)process.exitCode=1;

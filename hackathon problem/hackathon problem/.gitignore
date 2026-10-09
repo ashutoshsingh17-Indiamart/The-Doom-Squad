@@ -1,0 +1,22 @@
+# Local credentials
+.env
+.env.*
+!.env.example
+
+# Dependencies and generated output
+node_modules/
+dist/
+build/
+.venv/
+__pycache__/
+*.pyc
+
+# Local logs and editor files
+*.log
+.DS_Store
+.idea/
+.vscode/
+
+# Demo QA and temporary preparation files
+dashboard/outputs/
+dashboard/work/

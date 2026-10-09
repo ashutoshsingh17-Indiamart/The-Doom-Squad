@@ -1,0 +1,168 @@
+[
+  {
+    "path": "growth",
+    "label": "Sustained improvement",
+    "seed": 8,
+    "calls": 50,
+    "A": 31,
+    "B": 19,
+    "traffic": [
+      20,
+      40,
+      50,
+      50,
+      100
+    ],
+    "result": "Variant B wins",
+    "confirmation": {
+      "p": 0.019766611097880533,
+      "sufficient": true,
+      "significant": true,
+      "lift": 60,
+      "aCount": 10,
+      "bCount": 10,
+      "aGoals": 1,
+      "bGoals": 7
+    },
+    "pdf": "growth.pdf",
+    "audit": "growth.json"
+  },
+  {
+    "path": "late-safety",
+    "label": "Early growth, safety stop",
+    "seed": 8,
+    "calls": 19,
+    "A": 15,
+    "B": 4,
+    "traffic": [
+      20,
+      40,
+      0
+    ],
+    "result": "Variant B rolled back",
+    "confirmation": {
+      "p": 1,
+      "sufficient": false,
+      "significant": false,
+      "lift": 0,
+      "aCount": 0,
+      "bCount": 0,
+      "aGoals": 0,
+      "bGoals": 0
+    },
+    "pdf": "late-safety.pdf",
+    "audit": "late-safety.json"
+  },
+  {
+    "path": "fade",
+    "label": "Early growth, then retreat",
+    "seed": 10,
+    "calls": 50,
+    "A": 31,
+    "B": 19,
+    "traffic": [
+      20,
+      40,
+      20,
+      20,
+      20
+    ],
+    "result": "No clear winner",
+    "confirmation": {
+      "p": 0.14086687306501616,
+      "sufficient": true,
+      "significant": false,
+      "lift": -40,
+      "aCount": 10,
+      "bCount": 10,
+      "aGoals": 5,
+      "bGoals": 1
+    },
+    "pdf": "fade.pdf",
+    "audit": "fade.json"
+  },
+  {
+    "path": "recovery",
+    "label": "Slow start, then recovery",
+    "seed": 1,
+    "calls": 50,
+    "A": 34,
+    "B": 16,
+    "traffic": [
+      20,
+      20,
+      40,
+      40,
+      40
+    ],
+    "result": "No clear winner",
+    "confirmation": {
+      "p": 0.3034055727554194,
+      "sufficient": true,
+      "significant": false,
+      "lift": 30,
+      "aCount": 10,
+      "bCount": 10,
+      "aGoals": 1,
+      "bGoals": 4
+    },
+    "pdf": "recovery.pdf",
+    "audit": "recovery.json"
+  },
+  {
+    "path": "hold",
+    "label": "Close comparison",
+    "seed": 6,
+    "calls": 50,
+    "A": 34,
+    "B": 16,
+    "traffic": [
+      20,
+      20,
+      20,
+      20,
+      20
+    ],
+    "result": "No clear winner",
+    "confirmation": {
+      "p": 0.6284829721362257,
+      "sufficient": true,
+      "significant": false,
+      "lift": 20,
+      "aCount": 10,
+      "bCount": 10,
+      "aGoals": 2,
+      "bGoals": 4
+    },
+    "pdf": "hold.pdf",
+    "audit": "hold.json"
+  },
+  {
+    "path": "reverse",
+    "label": "Control performs better",
+    "seed": 48,
+    "calls": 50,
+    "A": 35,
+    "B": 15,
+    "traffic": [
+      20,
+      10,
+      5,
+      5,
+      0
+    ],
+    "result": "Baseline A wins",
+    "confirmation": {
+      "p": 0.032507739938080656,
+      "sufficient": true,
+      "significant": true,
+      "lift": -50,
+      "aCount": 10,
+      "bCount": 10,
+      "aGoals": 5,
+      "bGoals": 0
+    },
+    "pdf": "reverse.pdf",
+    "audit": "reverse.json"
+  }
+]
