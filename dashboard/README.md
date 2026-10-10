@@ -18,7 +18,7 @@ Open http://127.0.0.1:3000. React and the API share one origin. For Supabase, ru
 
 ## Present the demo
 
-1. **Prompt variants.** Choose an improvement chip to load its reviewed prompt immediately. All four suggestions are shipped with the app and use no model request. They preserve the current A prompt and append the selected instructions. Custom comments still use Generate variant B and a free OpenRouter model. Review the instruction diff, change summary or full prompt; either prompt can be edited.
+1. **Prompt variants.** Choose an improvement chip to load its reviewed prompt immediately. All four suggestions are shipped with the app and use no model request. They preserve the current A prompt and append the selected instructions. Custom comments use Generate variant B, which asks Sarvam-105B to write the challenger. Review the instruction diff, change summary or full prompt; either prompt can be edited.
 2. **Experiment setup.** Select buyer goals: **Confirm requirement**, **Capture specifications**, and **Collect quantity**. A call succeeds only when every selected goal is met. Set starting B share, growth increment, maximum share, Automatic/Review first, growth/reduction switches, detail-quality protection and Standard/Stronger evidence. All controls affect decisions. The main interface contains no rehearsal or test-harness explanations.
 3. **Results & rollout.** Start experiment or press Enter outside a control on setup. Prompt versions, goals and controls freeze at launch. Pause/resume the test. For presenting, **Alt+Enter** completes the current replay without an extra screen control. Calls include recordings, captured fields and transcript evidence.
 4. The traffic graph and vertical stage report stay on the same screen. Each stage shows incoming traffic, **new A/B assignments and goal rates for that stage**, a separate cumulative table, then the checkpoint decision. Inspect stage/cumulative calls directly or open **Inspect checkpoint** for **Calls so far**, **This round**, and (when available) **Final comparison** scopes. Filter A/B and open any recording. Earlier checkpoints never include later calls.
@@ -26,7 +26,7 @@ Open http://127.0.0.1:3000. React and the API share one origin. For Supabase, ru
 
 `node scripts/decision-audit-check.mjs` verifies all checkpoint scopes, goal columns, variant filters, transcript drill-down and focus return, all 50 numbered steps, report export, and mobile layout. Save endpoints are stubbed for this UI check; it does not add experiments to Supabase or call voice/model providers.
 
-Replay consumes **no Sarvam or OpenRouter credits**. Editing a prompt does not change saved call outcomes. Use Try the agent to exercise a new prompt live.
+Replay consumes **no Sarvam credits**. Editing a prompt does not change saved call outcomes. Use Try the agent to exercise a new prompt live.
 
 New experiments automatically rotate through six conditions: B wins, grows then stops on safety, grows then retreats/holds, recovers after a slow start, stays steady, and loses to A. Fix a condition with `?pin=1&scenario=growth`, `late-safety`, `fade`, `recovery`, `hold` or `reverse`; these URLs use each path's declared seed. `?pin=1&seed=8` pins the original growth run (A 1/10, B 7/10; p ≈ 0.0198), and seed overrides remain available. Changing controls or goals can change the result. The scenarios select matching prepared recordings and cached verdicts; they are not production evidence.
 
@@ -50,7 +50,7 @@ Six distinct outcomes replace the original demo history. New experiments continu
 
 The 135 distinct WAVs cover both A/B and safety examples; 150 persona/scenario references reuse identical recordings where appropriate. Connected calls use Sarvam Bulbul v3, Indian English, six buyer voices (three male and three female) and two caller voices. Buyer gender matches the assigned voice, and caller/buyer use different voices. Unanswered calls contain ringback, not invented conversation. WAV durations are measured from actual audio.
 
-`shared/evaluations.mjs` contains **actual OpenRouter LLM verdicts** generated during preparation. The evaluator reads transcripts, tags a disposition, and extracts buyer-supported evidence. Backend validation rejects unsupported field quotes and ensures incomplete fields cannot count as Buyer enriched. Known context fields are excluded from capture. Identical transcripts reuse an evaluated verdict. Ground-truth scenario expectations are not supplied to the evaluator.
+`shared/evaluations.mjs` contains **actual LLM verdicts** generated during preparation; each verdict records the model that produced it. The shipped verdicts were prepared with free OpenRouter models before the evaluator moved to Sarvam-105B; `npm run evaluate:demo` (with the dev server running) regenerates every verdict with Sarvam-105B, then run `npm test` and `npm run samples`. The evaluator reads transcripts, tags a disposition, and extracts buyer-supported evidence. Backend validation rejects unsupported field quotes and ensures incomplete fields cannot count as Buyer enriched. Known context fields are excluded from capture. Identical transcripts reuse an evaluated verdict. Ground-truth scenario expectations are not supplied to the evaluator.
 
 ## Metrics and experiment policy
 
@@ -71,7 +71,7 @@ The decline/recovery/steady/control paths review adaptive evidence at the second
 
 Try the agent supports six products, A/B, English or Hindi/Hinglish, and selectable male/female Sarvam voices. The opening identifies IndiaMART naturally. Known buyer name/city are editable; clear them to test missing identity collection. The agent confirms intent, collects buyer-supported fields, handles corrections and refusals, and limits retries. It must not claim to be human or promise prices/availability.
 
-Text uses OpenRouter. Voice replies use Sarvam TTS; microphone input uses Sarvam STT. Recording stops after 25 seconds and transcription can be reviewed before sending. No phone call, real requirement posting, or seller contact occurs.
+Replies are written by Sarvam-105B. Voice replies use Sarvam Bulbul TTS; microphone input uses Sarvam Saaras STT. Recording stops after 25 seconds and transcription can be reviewed before sending. No phone call, real requirement posting, or seller contact occurs.
 
 ## Preparation and verification
 
@@ -90,9 +90,9 @@ node scripts/client-guide-check.mjs
 node scripts/check-client-secrets.mjs
 ```
 
-Recording preparation caches each speaker/text clip and respects rate limits. Evaluator preparation caches transcript verdicts and retries alternate free providers. Atomic manifest updates avoid partially written browser assets. Provider failures are reported; pending calls are never silently presented as LLM-evaluated.
+Recording preparation caches each speaker/text clip and respects rate limits. Evaluator preparation caches transcript verdicts and retries failed Sarvam-105B batches. Atomic manifest updates avoid partially written browser assets. Provider failures are reported; pending calls are never silently presented as LLM-evaluated.
 
-The browser check verifies all four instant chips without model requests, goal selectors, rollout controls, winner/rollback/inconclusive paths and desktop/mobile layouts. Screenshots are saved under `outputs/`. It consumes no Sarvam or OpenRouter credits. The custom prompt writer still depends on free-provider availability.
+The browser check verifies all four instant chips without model requests, goal selectors, rollout controls, winner/rollback/inconclusive paths and desktop/mobile layouts. Screenshots are saved under `outputs/`. It consumes no Sarvam credits. The custom prompt writer calls Sarvam-105B and needs `SARVAM_API_KEY`.
 
 `client-guide-check.mjs` verifies the workspace navigation, source Markdown rendering/downloads, graphics, section links, technical/artifact links, whole-card and keyboard opening, independent PDF actions, in-report call filters, direct guide URLs and desktop/mobile layout. It uses local fixture responses and makes no persistence or provider requests.
 
