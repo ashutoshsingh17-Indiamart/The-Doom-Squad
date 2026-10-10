@@ -10,7 +10,7 @@ VoiceOps runs its whole conversation loop on Sarvam. We chose Sarvam because Ind
 
 | Sarvam model | Job in VoiceOps | How it is wired |
 |---|---|---|
-| **Sarvam-105B** (chat) | Writes challenger prompts, judges every call, and drives the live collector | Called from the Cloudflare Worker at `/v1/chat/completions` with JSON output and low reasoning effort. The prompt writer returns `{prompt, changes, hypothesis}`. The evaluator returns a disposition and an exact buyer quote for every field; the backend rejects any quote that the buyer never said. The live collector extracts fields, then asks exactly one question per turn. |
+| **Sarvam-105B** (chat) | Writes challenger prompts, judges every call, and drives the live collector | Called from the Cloudflare Worker at `/v1/chat/completions` with JSON output and reasoning switched off, so replies come back fast and direct. The prompt writer returns `{prompt, changes, hypothesis}`. The evaluator returns a disposition and an exact buyer quote for every field; the backend rejects any quote that the buyer never said. The live collector extracts fields, then asks exactly one question per turn. |
 | **Sarvam Bulbul v3** (text-to-speech) | Gives the agent and the 50 buyers their voices | 135 prepared WAV recordings: six buyer voices (three male, three female) and two caller voices in Indian English, cached per speaker and line. Live replies can use six selectable voices. |
 | **Sarvam Saaras v3** (speech-to-text) | Hears the buyer in **Try the agent** | Microphone clips of up to 25 seconds are transcribed in English or Hindi/Hinglish, and the buyer can review the text before sending. |
 
