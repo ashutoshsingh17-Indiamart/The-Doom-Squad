@@ -30,9 +30,9 @@ function parseModelJson(raw){
 async function chat(env,messages,requestedModel,maxTokens=1600) {
   requireConfig(env,'SARVAM_API_KEY');
   const model=chatModels.some(m=>m.id===requestedModel)?requestedModel:env.SARVAM_CHAT_MODEL||chatModels[0].id;
-  // Reasoning tokens count toward max_tokens, so leave headroom above the answer budget.
-  const data=await upstream('https://api.sarvam.ai/v1/chat/completions',{method:'POST',headers:{'api-subscription-key':env.SARVAM_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({model,messages,temperature:.25,max_tokens:maxTokens+1024,reasoning_effort:'low',response_format:{type:'json_object'}})},'Sarvam');
-  const raw=data.choices?.[0]?.message?.content;if(!raw)throw new ApiError(`Sarvam ${model} returned no usable text (${data.choices?.[0]?.finish_reason||'empty response'}). Please retry.`,502);
+  // reasoning_effort:null turns thinking off: with it on, sarvam-105b can spend the whole budget reasoning and return empty content.
+  const data=await upstream('https://api.sarvam.ai/v1/chat/completions',{method:'POST',headers:{'api-subscription-key':env.SARVAM_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({model,messages,temperature:.25,max_tokens:maxTokens+1024,reasoning_effort:null,response_format:{type:'json_object'}})},'Sarvam');
+  const message=data.choices?.[0]?.message;const raw=message?.content||message?.reasoning_content;if(!raw)throw new ApiError(`Sarvam ${model} returned no usable text (${data.choices?.[0]?.finish_reason||'empty response'}). Please retry.`,502);
   let parsed;try{parsed=parseModelJson(raw);}catch{throw new ApiError('The model did not return valid JSON. Please retry.',502);}
   return {data:parsed,model:data.model||model};
 }
