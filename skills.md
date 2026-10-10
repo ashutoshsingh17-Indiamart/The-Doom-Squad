@@ -1,6 +1,6 @@
 # VoiceOps — Product design & engineering
 
-VoiceOps is designed around one operating principle: **a team should be able to understand and inspect a traffic decision before trusting it.** The platform brings prompt creation, experiment controls, conversation evaluation and rollout evidence into one continuous journey.
+VoiceOps is designed around one operating principle: **a team should be able to understand and inspect every decision to scale Variant B up or down before trusting it.** The platform brings prompt creation, experiment controls, conversation evaluation and rollout evidence into one continuous journey.
 
 This document explains the design decisions behind the workspace, the capabilities used to implement them, and how the product was built and verified. For a guided experience, start with the [README](README.md).
 

@@ -1,11 +1,13 @@
-.sarvam-card{margin:-14px 3px 26px;padding:11px 12px 12px;border:1px solid #3b4b6b;border-radius:9px;background:linear-gradient(150deg,#1d2b47,#1a2540 60%,#2a2742);color:#a9b5cb;text-align:left;display:grid;gap:6px;position:relative;overflow:hidden}
+.sidebar{overflow-y:auto;overflow-x:hidden}
+.sidebar .workspace{margin:24px 3px 8px;padding:10px 8px}
+.sarvam-card{flex-shrink:0;margin:0 3px 22px;padding:9px 10px 10px;border:1px solid #3b4b6b;border-radius:9px;background:linear-gradient(150deg,#1d2b47,#1a2540 60%,#2a2742);color:#a9b5cb;text-align:left;display:grid;gap:7px;position:relative;overflow:hidden}
 .sarvam-card::before{content:'';position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,#ff8a4c,#f7c25a,#7d8bff)}
 .sarvam-card:hover{border-color:#56688f;background:linear-gradient(150deg,#22324f,#1d2945 60%,#2f2b4a)}
-.sarvam-card-title{display:flex;align-items:center;gap:6px;color:#e8ebf5;font-size:12.5px;font-weight:600;margin-bottom:2px}
+.sarvam-card-title{display:flex;align-items:center;gap:6px;color:#e8ebf5;font-size:12.5px;font-weight:600}
 .sarvam-card-title svg{color:#f7c25a}
 .sarvam-card-title b{font-weight:800;background:linear-gradient(90deg,#ff9a5a,#f7c25a);-webkit-background-clip:text;background-clip:text;color:transparent}
-.sarvam-card-row{display:grid;font-size:11px;line-height:1.35;color:#8a97b0}
-.sarvam-card-row i{font-style:normal;font-weight:650;color:#d8e1fc;font-size:11.5px}
+.sarvam-card-models{display:flex;flex-wrap:wrap;gap:4px}
+.sarvam-card-models i{font-style:normal;font-size:10.5px;font-weight:650;color:#d8e1fc;background:#ffffff12;border:1px solid #ffffff1a;border-radius:5px;padding:2px 6px;white-space:nowrap}
 @media(max-width:760px){.sarvam-card{display:none}}
 .sarvam-pill{display:none;align-items:center;gap:5px;border:1px solid #f3d9b8;background:#fff8ef;color:#7a4b16;border-radius:999px;padding:5px 10px;font-size:11.5px;font-weight:600;white-space:nowrap}
 .sarvam-pill svg{color:#e8902f}
