@@ -2,6 +2,40 @@
 
 VoiceOps gives your buyer experience team a workspace to improve voice agent prompts, test a change on a small share of calls, and expand it when the evidence supports it. Every traffic decision comes with the calls, goal results and reasoning that led to it.
 
+## Built with Sarvam
+
+> **VoiceOps listens, speaks and thinks with Sarvam.** Every voice in the buyer cohort, every word the live agent hears, every reply it writes and every new call verdict runs on Sarvam's Indian-language AI stack. It is built for the way IndiaMART buyers actually talk: Indian English, Hindi and Hinglish.
+
+| What VoiceOps does | Powered by | Where you'll see it |
+|---|---|---|
+| Speaks to buyers in natural Indian voices | **Sarvam Bulbul v3** (text-to-speech) | All 135 prepared call recordings, with six buyer voices and two caller voices, plus the spoken replies in **Try the agent** |
+| Understands what the buyer says | **Sarvam Saaras v3** (speech-to-text) | Microphone input in **Try the agent**, in English and Hindi/Hinglish |
+| Writes challenger prompts, holds the conversation and judges each call | **Sarvam-105B** (chat model) | **Generate variant B**, the live agent's replies and field capture, and the call evaluator |
+
+The rest of the stack keeps the workspace fast and the evidence safe:
+
+| Layer | Tools |
+|---|---|
+| Workspace | React 19, TypeScript, Vite |
+| Hosting and API | Cloudflare Workers; provider keys stay on the server |
+| Reports and history | Supabase (Postgres with row-level security) |
+| Verification | Node test runner, Playwright browser checks, PDF layout checks |
+
+## Coming next: going deeper with Sarvam
+
+VoiceOps already decides *which* prompt deserves more traffic. These enhancements would put Sarvam's agent platform under that decision as well:
+
+| Enhancement | Sarvam product | What it adds |
+|---|---|---|
+| Variants as real voice agents | **Sarvam Voice Agents (Samvaad)** | A and B become two versioned Samvaad agents. Agent variables carry the buyer's name, city and product in, and bring quantity and specifications back. |
+| Live outbound calls | **Samvaad outbound calling and webhooks** | VoiceOps assigns each buyer to A or B, Sarvam places the call, and the transcript returns to VoiceOps for scoring at the next checkpoint. |
+| Preview the exact agent under test | **Sarvam web widget and Web SDK** | **Try the agent** talks to the same Samvaad agent that receives real traffic. |
+| New variant types | **Bulbul voices and Sarvam-105B** | Compare a voice, speaking pace or opening line, not only the prompt text. |
+| Every Indian language | **Samvaad's 10 Indian languages plus English** | Run the same experiment per language and compare results side by side. |
+| Follow up where buyers already are | **Samvaad on WhatsApp** (enterprise channel) | Continue an unfinished requirement over WhatsApp voice or chat. |
+| Catalogue-aware answers | **Samvaad knowledge base** | The agent explains unfamiliar specifications from the product catalogue, without promising price or stock. |
+| A morning rollout brief | **Sarvam Indus Cowork** | A scheduled Cowork agent reads the latest reports and sends the team the current leader, traffic changes and calls worth hearing, by email or Slack. |
+
 For IndiaMART, the journey begins when a buyer searches for a product but leaves before posting a requirement. The agent follows up, confirms the need, and collects the quantity and product specifications. VoiceOps helps you answer a practical question: **does a new conversation approach collect better requirements?**
 
 ![The VoiceOps workflow: design a challenger, set goals and traffic, evaluate calls, then control rollout.](docs/visuals/experiment-loop.svg)
@@ -103,13 +137,13 @@ The result is not always “roll out B.” A limited share, a reduction, an earl
 
 ## Try the voice agent
 
-Use **Try the agent** in the top bar to experience the requirement collector directly. Choose a product and variant, adjust the buyer context, and use text or microphone input. Sarvam provides Indian voices and transcription; the agent supports English and Hindi/Hinglish interactions.
+Use **Try the agent** in the top bar to experience the requirement collector directly. Choose a product and variant, adjust the buyer context, and use text or microphone input. Sarvam powers the whole conversation: Saaras transcribes the buyer, Sarvam-105B writes each reply and captures the requirement, and Bulbul speaks it in an Indian voice. The agent supports English and Hindi/Hinglish.
 
 The collector handles quantity, configured specifications, volunteered details, corrections and refusals. Explore the [Buyer cohort](#/cohort) to see product questions and different conversation challenges.
 
 ## About this workspace
 
-This evaluation workspace simulates buyer calls using 50 personas across six product categories. It exercises the actual goal scoring, traffic policy, audit report and persistence flow. Sandbox runs use prepared conversations; use **Try the agent** to assess a custom prompt interactively. Measuring production uplift and applying traffic changes to real calls requires a live calling integration.
+This evaluation workspace simulates buyer calls using 50 personas across six product categories. It exercises the actual goal scoring, traffic policy, audit report and persistence flow. Sandbox runs use prepared conversations; use **Try the agent** to assess a custom prompt interactively. Measuring production uplift and applying traffic changes to real calls requires a live calling integration, such as the Sarvam Voice Agents path described in [Coming next](#coming-next-going-deeper-with-sarvam).
 
 Read [skills.md](skills.md) for the product design decisions, evaluation method, architecture and tools used to build VoiceOps.
 

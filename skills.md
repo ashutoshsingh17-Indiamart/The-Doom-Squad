@@ -4,6 +4,34 @@ VoiceOps is designed around one operating principle: **a team should be able to 
 
 This document explains the design decisions behind the workspace, the capabilities used to implement them, and how the product was built and verified. For a guided experience, start with the [README](README.md).
 
+## Built with Sarvam: where each model fits
+
+VoiceOps runs its whole conversation loop on Sarvam. We chose Sarvam because IndiaMART buyers speak Indian English, Hindi and Hinglish, and Sarvam's models are built for exactly those voices and languages. One provider for listening, speaking and reasoning also keeps a single key, a single bill and one consistent behaviour across the product.
+
+| Sarvam model | Job in VoiceOps | How it is wired |
+|---|---|---|
+| **Sarvam-105B** (chat) | Writes challenger prompts, judges every call, and drives the live collector | Called from the Cloudflare Worker at `/v1/chat/completions` with JSON output and low reasoning effort. The prompt writer returns `{prompt, changes, hypothesis}`. The evaluator returns a disposition and an exact buyer quote for every field; the backend rejects any quote that the buyer never said. The live collector extracts fields, then asks exactly one question per turn. |
+| **Sarvam Bulbul v3** (text-to-speech) | Gives the agent and the 50 buyers their voices | 135 prepared WAV recordings: six buyer voices (three male, three female) and two caller voices in Indian English, cached per speaker and line. Live replies can use six selectable voices. |
+| **Sarvam Saaras v3** (speech-to-text) | Hears the buyer in **Try the agent** | Microphone clips of up to 25 seconds are transcribed in English or Hindi/Hinglish, and the buyer can review the text before sending. |
+
+**Decision:** keep every Sarvam key on the server. The browser only calls VoiceOps' own API, and a build check confirms that no key reaches the client bundle.
+
+**Client benefit:** what the team hears in a recording, what the agent understood and how the call was judged all come from one Indian-language stack, so a result can be traced from the buyer's words to the rollout decision.
+
+The replay's prepared verdicts were generated before the evaluator moved to Sarvam-105B; each verdict records the model that produced it, and one command regenerates all of them with Sarvam-105B (see the [technical guide](dashboard/README.md)).
+
+## Upcoming variants with Sarvam
+
+These enhancements build on the current architecture, and each maps to a documented Sarvam capability:
+
+1. **Variants as Sarvam Voice Agents (Samvaad).** At launch, VoiceOps creates or updates two versioned agents from the frozen prompts, using Sarvam's agent API. Agent variables pass the buyer's name, city and product in and collect confirmation, quantity and both specifications out, which map directly onto VoiceOps' three buyer goals.
+2. **Real calls under the same traffic policy.** VoiceOps keeps assignment and checkpoint decisions. For each buyer it triggers a Samvaad outbound call on the assigned agent. Sarvam's post-call webhook returns the transcript, or reports that the call did not connect, to a new Worker endpoint, and the existing evaluator and policy engine score it.
+3. **Preview through Sarvam's Web SDK.** **Try the agent** connects to the exact Samvaad agent under test through Sarvam's web widget or Web SDK, with the realtime connection proxied by the Worker so the key stays server-side.
+4. **New variant types.** The same experiment engine can compare a Bulbul voice, speaking pace, opening line or language, not only the prompt text.
+5. **Language-level experiments.** Samvaad supports 10 Indian languages plus English, so an experiment can run per language and report each one separately.
+6. **WhatsApp follow-up.** Samvaad agents on WhatsApp (an enterprise channel) can continue an unfinished requirement in voice or chat.
+7. **A Cowork rollout analyst.** A scheduled **Sarvam Indus Cowork** agent reads exported reports from its knowledge base and sends a morning brief on the current leader, traffic changes and calls worth hearing, through its Gmail or Slack connectors.
+
 ![VoiceOps connects the workspace, conversation services, evaluation, traffic policy and persistent reports.](docs/visuals/platform-architecture.svg)
 
 ## Start with the buyer's requirement
@@ -18,7 +46,7 @@ The supplied master voice prompt informed the collection rules: ask clear questi
 
 ## Make a prompt change reviewable
 
-An experiment begins with a control and an explicit challenger. A plain-language improvement request becomes editable instructions, a change summary and a hypothesis. Reviewed suggestions make common improvements quick to explore; custom requests use the OpenRouter prompt writer.
+An experiment begins with a control and an explicit challenger. A plain-language improvement request becomes editable instructions, a change summary and a hypothesis. Reviewed suggestions make common improvements quick to explore; custom requests use the Sarvam-105B prompt writer.
 
 **Decision:** present an instruction-level diff alongside the full prompt, and freeze both versions at launch. Unchanged instructions can collapse so the proposed change stays readable.
 
@@ -109,10 +137,10 @@ The platform was developed in five connected phases, each centered on an operato
 | Phase | Product capability delivered | Tools and approach |
 |---|---|---|
 | Model the buyer journey | A reusable collector with category-specific questions and realistic conversation challenges | Supplied voice prompt, JavaScript domain modules, 50-persona test audience |
-| Connect conversation services | Prompt generation, live requirement collection, Indian voices and microphone transcription | OpenRouter chat APIs, Sarvam TTS/STT, backend field/evidence validation |
+| Connect conversation services | Prompt generation, live requirement collection, Indian voices and microphone transcription | Sarvam-105B chat, Sarvam Bulbul TTS and Saaras STT, backend field/evidence validation |
 | Implement experimentation | Random assignment, selectable goals, adaptive exposure, safety controls and independent winner comparison | Shared JavaScript scoring/policy engine, seeded assignment, Fisher exact calculation |
 | Create the operator journey | Prompt diff, setup cockpit, call activity, labeled chart and stage evidence | React 19, TypeScript, Vite, Lucide, DM Sans/Manrope, CSS and SVG |
-| Preserve and verify results | Supabase reports, clickable outcome library, PDF export and matching audit artifacts | Supabase REST/RLS, local PDF serializer, Node tests, Chrome/Playwright, Python/PyMuPDF |
+| Preserve and verify results | Supabase reports, clickable outcome library, PDF export and matching audit artifacts | Supabase REST/RLS, Cloudflare Workers, local PDF serializer, Node tests, Chrome/Playwright, Python/PyMuPDF |
 
 Local development used Node.js/npm, PowerShell, `rg` for source inspection and `apply_patch` for edits. Browser verification followed the available Browser skill workflow; when its connection was unavailable, installed Chrome with Playwright provided layout and interaction checks. These tools supported implementation and verification of the client experience.
 
@@ -134,6 +162,6 @@ Automated checks cover assignment uniqueness, independent group balance, per-goa
 
 The evaluation environment simulates conversations with 50 personas across six products. It keeps audio, transcript, duration and evaluator evidence attached to the same conversation. Interactive trials use the actual provider integrations; a custom prompt's effectiveness must be measured with new conversations before a production rollout.
 
-Production use requires connecting a live calling and traffic-routing service and adding authenticated workspace access. The current workspace supplies the experiment, evaluation, policy, persistence and reporting experience for that integration.
+Production use requires connecting a live calling and traffic-routing service, such as the Sarvam Voice Agents path above, and adding authenticated workspace access. The current workspace supplies the experiment, evaluation, policy, persistence and reporting experience for that integration.
 
 For implementation setup and verification commands, use the [technical guide](dashboard/README.md). For a client walkthrough, return to the [README](README.md) or open [Sample outputs](#/samples).
