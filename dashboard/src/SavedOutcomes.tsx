@@ -1,5 +1,6 @@
 import {ArrowDownRight,ArrowRight,ArrowUpRight,CheckCircle2,Clock,Download,FlaskConical,FolderOpen,Loader2,RotateCcw,ShieldCheck} from 'lucide-react';
 import {aggregate} from '../shared/domain.mjs';
+import {demoScenarios} from '../shared/demo-scenarios.mjs';
 import type {ReplayRun} from '../shared/experiment-run.mjs';
 import './saved-outcomes.css';
 
@@ -15,13 +16,24 @@ function outcomeKind(run:ReplayRun){
  return {label:'Keep testing',tone:'testing',Icon:Clock};
 }
 
+// Library order: B wins first, then open results, retreats, safety stops and A wins.
+const kindRank:Record<string,number>={winner:0,testing:1,retreat:2,stopped:3,control:4};
+const scenarioRank=(id:string)=>{const i=demoScenarios.findIndex(s=>s.id===id);return i<0?demoScenarios.length:i;};
+// One card per scenario. New sandbox runs rotate through the same scenarios, so keep the earliest
+// saved run of each (the prepared sample) instead of listing every repeat.
+export function librarySamples(outcomes:SavedOutcome[]){
+ const first=new Map<string,SavedOutcome>();
+ for(const h of outcomes){if(h.status!=='completed'&&h.status!=='stopped')continue;const prev=first.get(h.scenario);if(!prev||h.created_at<prev.created_at)first.set(h.scenario,h);}
+ return [...first.values()].sort((x,y)=>kindRank[outcomeKind(x.payload).tone]-kindRank[outcomeKind(y.payload).tone]||scenarioRank(x.scenario)-scenarioRank(y.scenario));
+}
+
 function TrafficPreview({run}:{run:ReplayRun}){
  const values=[run.initial,...run.decisions.map(d=>d.allocation)],x=(i:number)=>16+i*298/Math.max(1,values.length-1),y=(v:number)=>90-v*.54,points=values.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
  return <div className="saved-traffic"><div><span>Variant B traffic</span><strong>{run.allocation}% <small>final share</small></strong></div><svg viewBox="0 0 330 124" role="img" aria-label={`B traffic: ${values.join(', ')} percent`}><line x1="16" x2="314" y1="92" y2="92" className="saved-chart-axis"/><polygon points={`16,92 ${points} ${x(values.length-1)},92`} className="saved-chart-fill"/><polyline points={points} className="saved-chart-line"/>{values.map((v,i)=><g key={i}><circle cx={x(i)} cy={y(v)} r={i===values.length-1?4:3}/><text x={x(i)} y={y(v)-12} textAnchor="middle" className="saved-chart-value">{v}%</text><text x={x(i)} y="116" textAnchor="middle" className="saved-chart-label">{i?`C${i}`:'Start'}</text></g>)}</svg></div>;
 }
 
 export function SavedOutcomes({outcomes,loading,connected,locked,onRefresh,onOpen,onDownload}:Props){
- const complete=outcomes.filter(h=>h.status==='completed'||h.status==='stopped'),calls=complete.reduce((n,h)=>n+h.payload.calls.length,0),checkpoints=complete.reduce((n,h)=>n+h.payload.decisions.length,0);
+ const complete=librarySamples(outcomes),calls=complete.reduce((n,h)=>n+h.payload.calls.length,0),checkpoints=complete.reduce((n,h)=>n+h.payload.decisions.length,0);
  return <div className="saved-outcomes">
  <div className="saved-library-summary"><div><span className="saved-library-icon"><FolderOpen size={23}/></span><div><strong>Explore the decisions behind each result</strong><p>Open any card to follow its traffic journey, inspect calls and read the recommendation.</p></div></div><div className="saved-library-actions"><span className={`saved-connection ${connected?'connected':''}`}><i/>{connected?'All outcomes saved':'Storage unavailable'}</span><button className="icon-button" onClick={onRefresh} aria-label="Refresh sample outputs"><RotateCcw size={16}/></button></div></div>
  {complete.length>0&&<div className="saved-library-totals"><span><strong>{complete.length}</strong> sample outputs</span><span><strong>{calls}</strong> calls evaluated</span><span><strong>{checkpoints}</strong> decisions to inspect</span></div>}

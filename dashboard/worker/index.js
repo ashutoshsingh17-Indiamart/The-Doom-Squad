@@ -94,7 +94,7 @@ export default {async fetch(request,env){
     }
     if(request.method==='GET'&&url.pathname==='/api/models')return json(await models());
     if(request.method==='GET'&&url.pathname==='/api/prompts')return json(await supabase(env,'voiceops_prompts?order=created_at.desc&limit=30'));
-    if(request.method==='GET'&&url.pathname==='/api/experiments')return json(await supabase(env,'voiceops_experiments?order=created_at.desc&limit=25'));
+    if(request.method==='GET'&&url.pathname==='/api/experiments')return json(await supabase(env,'voiceops_experiments?status=in.(completed,stopped)&order=created_at.asc&limit=25'));
     if(request.method!=='POST')return json({error:'Not found'},404);
     if(url.pathname==='/api/transcribe'){
       requireConfig(env,'SARVAM_API_KEY');const form=await request.formData();const audio=form.get('file');

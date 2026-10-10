@@ -50,7 +50,7 @@ When you are ready to try the workflow yourself, open [Start new A/B](#/start). 
 
 ## 1. Describe the improvement
 
-**Variant A** is your control: the prompt you are comparing against. **Variant B** is your challenger. You can edit the control, describe an improvement in plain language, or choose a suggested improvement to preview a challenger immediately.
+**Variant A** is your control: the prompt you are comparing against. **Variant B** is your challenger. You can edit the control, describe an improvement in plain language, or pick one or more suggested improvements, which combine into a single challenger you can preview immediately.
 
 For example, choose **Explain unfamiliar specs** to help buyers answer product questions with less friction. For a custom request, describe the behavior you want and select **Generate Variant B**. The prompt writer turns your request into instructions you can inspect and edit.
 
