@@ -29,7 +29,7 @@ export function RolloutJourney({exp,initial,onSelect}:{exp:Run|null;initial:numb
  useEffect(()=>{if(inspecting!==null)inspector.current?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});},[inspecting]);
  const snapshot=exp&&inspecting!==null?checkpointCalls(exp.calls,exp.decisions,inspecting,scope):[];
  const filtered=snapshot.filter(c=>variant==='all'||c.variant===variant),rounds=exp?experimentRounds(exp):[];
- return <><section className="panel journey-panel audit-journey"><div className="panel-heading"><div><h2>Traffic decisions</h2><p>Follow the traffic, results and decision at every stage.</p></div><span className="badge purple">{exp?.decisions.length||0} checkpoints</span></div>
+ return <><section id="traffic-decisions" className="panel journey-panel audit-journey"><div className="panel-heading"><div><h2>Traffic decisions</h2><p>Follow the traffic, results and decision at every stage.</p></div><span className="badge purple">{exp?.decisions.length||0} checkpoints</span></div>
  <div className="stage-guide"><span><i>1</i> Traffic entering the stage</span><ArrowRight size={14}/><span><i>2</i> New calls & goal results</span><ArrowRight size={14}/><span><i>3</i> Checkpoint decision</span></div>
  <div className="traffic-stages">
  {rounds.map((r,i)=>{

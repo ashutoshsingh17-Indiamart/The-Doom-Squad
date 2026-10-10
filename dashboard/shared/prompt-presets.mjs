@@ -6,3 +6,10 @@ export const promptPresets=[
  {id:'repeat',label:'Stop repeating questions',request:'Capture every detail the buyer volunteers, including multiple specifications in one response. Never ask again for information already provided.',addition:'Before every reply, check the full conversation for quantity and specification details already provided. Record all volunteered fields from one answer immediately. Apply corrections to the existing values. Never repeat a resolved question; move directly to the next missing field.',changes:['Capture multiple details from one answer','Apply buyer corrections immediately','Skip every answered question'],hypothesis:'Fewer repeated questions reduce frustration and improve completion.'},
 ];
 export function preparedPrompt(id,baseline){const preset=promptPresets.find(p=>p.id===id);if(!preset)throw new Error('Unknown prompt suggestion');return {...preset,prompt:`${baseline}\n\nConversation improvement:\n${preset.addition}`};}
+// Several suggestions combine in catalogue order. Requests are newline-separated so the selection can be read back from the request text.
+export function preparedCombination(ids,baseline){
+ const chosen=promptPresets.filter(p=>ids.includes(p.id));if(!chosen.length)throw new Error('Choose at least one prompt suggestion');
+ if(chosen.length===1)return preparedPrompt(chosen[0].id,baseline);
+ return {id:chosen.map(p=>p.id).join('+'),label:chosen.map(p=>p.label).join(' + '),request:chosen.map(p=>p.request).join('\n'),addition:chosen.map(p=>p.addition).join('\n'),changes:chosen.flatMap(p=>p.changes),hypothesis:chosen.map(p=>p.hypothesis).join(' '),prompt:`${baseline}\n\nConversation improvements:\n${chosen.map(p=>`- ${p.addition}`).join('\n')}`};
+}
+export function selectedPresetIds(request){const parts=String(request||'').split('\n');return promptPresets.filter(p=>parts.includes(p.request)).map(p=>p.id);}

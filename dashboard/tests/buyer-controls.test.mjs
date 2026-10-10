@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {fixture,aggregate,decide,defaultGoals,defaultRollout,callMeetsGoal,personas,batchPlan} from '../shared/domain.mjs';
-import {promptPresets,preparedPrompt} from '../shared/prompt-presets.mjs';
+import {promptPresets,preparedPrompt,preparedCombination,selectedPresetIds} from '../shared/prompt-presets.mjs';
 const partial={...fixture('p01','B'),disposition:'Partial requirement',extracted:{Quantity:'200'},capture:33,guardrails:[]};
 test('goal selectors evaluate different buyer facts and require every selected goal',()=>{
  assert.equal(callMeetsGoal(partial,'confirm_need'),true);assert.equal(callMeetsGoal(partial,'capture_quantity'),true);assert.equal(callMeetsGoal(partial,'capture_specs'),false);
@@ -45,4 +45,14 @@ test('every suggestion is a distinct prepared prompt that preserves the current 
  assert.equal(promptPresets.length,4);const baseline='Current identity and buyer collection rules.';
  const outputs=promptPresets.map(p=>preparedPrompt(p.id,baseline));assert.equal(new Set(outputs.map(p=>p.prompt)).size,4);
  for(const output of outputs){assert.ok(output.prompt.startsWith(baseline));assert.ok(output.changes.length>0);assert.ok(output.hypothesis);}
+});
+test('several suggestions combine into one challenger and can be read back from its request',()=>{
+ const baseline='Current identity and buyer collection rules.';
+ assert.equal(preparedCombination(['specs'],baseline).prompt,preparedPrompt('specs',baseline).prompt);
+ const both=preparedCombination(['repeat','busy'],baseline),busy=preparedPrompt('busy',baseline),repeat=preparedPrompt('repeat',baseline);
+ assert.ok(both.prompt.startsWith(baseline));assert.ok(both.prompt.includes(busy.addition)&&both.prompt.includes(repeat.addition));
+ assert.ok(both.prompt.indexOf(busy.addition)<both.prompt.indexOf(repeat.addition));
+ assert.deepEqual(both.changes,[...busy.changes,...repeat.changes]);
+ assert.deepEqual(selectedPresetIds(both.request),['busy','repeat']);assert.deepEqual(selectedPresetIds('A custom request'),[]);
+ assert.throws(()=>preparedCombination([],baseline));
 });

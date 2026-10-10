@@ -1,7 +1,7 @@
 import {useEffect,useState} from 'react';
 import {ArrowDown,ArrowLeft,ArrowRight,ArrowUp,Check,CheckCircle2,ChevronRight,Clock,FileText,FlaskConical,GitCompareArrows,Loader2,LockKeyhole,Play,ShieldCheck,Sparkles,Users,Zap} from 'lucide-react';
 import {buyerGoals} from '../shared/domain.mjs';
-import {promptPresets} from '../shared/prompt-presets.mjs';
+import {promptPresets,selectedPresetIds} from '../shared/prompt-presets.mjs';
 import type {RolloutOptions,GoalSelection} from '../shared/domain.mjs';
 
 export type JourneyStep=1|2|3;
@@ -33,7 +33,7 @@ type PromptProps={promptA:string;promptB:string;improvement:string;acceptedReque
 export function PromptStep(p:PromptProps){
  const [editing,setEditing]=useState(false),[view,setView]=useState<'diff'|'full'>('diff');
  useEffect(()=>{if(p.promptB.trim()&&p.acceptedRequest===p.improvement)setEditing(false);},[p.promptB,p.acceptedRequest]);
- const hasB=!!p.promptB.trim(),requestVisible=!hasB||editing;
+ const hasB=!!p.promptB.trim(),requestVisible=!hasB||editing,chosenIds=selectedPresetIds(p.acceptedRequest);
  const rows=hasB?promptDiff(p.promptA,p.promptB):[],added=rows.filter(r=>r.kind==='added'&&r.text.trim()).length,removed=rows.filter(r=>r.kind==='removed'&&r.text.trim()).length;
  function request(text:string){setEditing(true);p.onRequest(text);}
  return <div className="journey-stage" key="prompts">
@@ -45,7 +45,7 @@ export function PromptStep(p:PromptProps){
     <div className="prompt-protection"><ShieldCheck size={17}/><div><strong>Built-in collection guardrails</strong><p>Buying intent, one question at a time, honest capture and respectful refusals.</p></div></div>
    </section>
    <section className={`panel journey-prompt-card challenger ${hasB?'has-prompt':''}`}><div className="journey-card-heading"><span className="variant-tag b">B</span><div><h3>Your challenger</h3><p>{hasB?'A focused change, ready for your review':'What would make the conversation better?'}</p></div><Sparkles size={21}/></div>
-    <div className="suggestion-chips instant-suggestions"><span>{hasB?'Try another improvement':'Choose an improvement'}</span>{promptPresets.map(s=><button key={s.id} className={p.acceptedRequest===s.request&&hasB?'chosen':''} aria-pressed={p.acceptedRequest===s.request&&hasB} disabled={p.generating} onClick={()=>p.onSuggestion(s.id)}>{s.label}{p.acceptedRequest===s.request&&hasB?<Check size={13}/>:<span>+</span>}</button>)}</div>
+    <div className="suggestion-chips instant-suggestions"><span>{hasB?'Add or remove improvements':'Choose one or more improvements'}</span>{promptPresets.map(s=>{const on=hasB&&chosenIds.includes(s.id);return <button key={s.id} className={on?'chosen':''} aria-pressed={on} disabled={p.generating} onClick={()=>p.onSuggestion(s.id)}>{s.label}{on?<Check size={13}/>:<span>+</span>}</button>;})}</div>
     {requestVisible&&<div className="challenger-request"><label htmlFor="improvement">Describe the improvement</label><textarea id="improvement" placeholder="e.g. Buyers sound busy. Make the flow shorter and skip details they already gave…" value={p.improvement} disabled={p.generating} maxLength={1500} onChange={e=>request(e.target.value)} rows={4}/>
      <div className="challenger-generate"><button className="button primary" onClick={p.onGenerate} disabled={p.generating||!p.improvement.trim()||!p.model}>{p.generating?<Loader2 size={16} className="spin"/>:<Sparkles size={16}/>} {p.generating?'Writing your challenger…':hasB?'Regenerate variant B':'Generate variant B'}</button>{editing&&hasB&&<button className="text-button" onClick={()=>{p.onRequest(p.acceptedRequest);setEditing(false);}}>Keep current variant</button>}</div>
      <details className="generator-options"><summary>Writing options</summary><label>Prompt writer<select aria-label="Prompt writer model" disabled={p.generating} value={p.model} onChange={e=>p.onModel(e.target.value)}>{!p.models.length&&<option>Loading models…</option>}{p.models.map(m=><option key={m.id} value={m.id}>{m.name}</option>)}</select></label><button className="text-button" disabled={p.generating} onClick={()=>p.onEdit('B')}>Write B manually</button></details>
