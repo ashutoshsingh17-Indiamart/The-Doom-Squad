@@ -1,5 +1,5 @@
 // Cloudflare Workers deployment. Build first with `npm run build`, then `npx wrangler deploy`.
-// Secrets (SARVAM_API_KEY, OPENROUTER_API_KEY, SUPABASE_URL, SUPABASE_SECRET_KEY) are set in the
+// Secrets (SARVAM_API_KEY, SUPABASE_URL, SUPABASE_SECRET_KEY) are set in the
 // Cloudflare dashboard, never in this file.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
@@ -10,5 +10,7 @@
     "directory": "./dist",
     "binding": "ASSETS"
   },
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // Keep variables added in the Cloudflare dashboard when a Git push redeploys the Worker.
+  "keep_vars": true
 }
